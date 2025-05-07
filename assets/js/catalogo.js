@@ -47,10 +47,12 @@ function renderCatalogo(pagina = 1) {
         card.className = "col-md-4 mb-4";
         card.innerHTML = `
             <div class="card h-100 shadow-sm">
+                ${estudio.imagen ? `<img src="${estudio.imagen}" class="card-img-top" alt="Imagen del estudio">` : ''}
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">${estudio.nombre}</h5>
                     <p class="card-text">${estudio.descripcion}</p>
                     <p class="card-text"><strong>Precio:</strong> $${estudio.precio}</p>
+                    ${estudio.categoria ? `<span class="badge bg-info mb-2">${estudio.categoria}</span>` : ''}
                     <button class="btn btn-primary mt-auto" onclick="verDetalleEstudio('${estudio.id}')">Ver detalles</button>
                 </div>
             </div>
@@ -172,6 +174,8 @@ function setupCargaExcel() {
         const idxRequisitos = headers.indexOf("requisitos");
         const idxDescripcion = headers.indexOf("descripcion del estudio");
         const idxPrecio = headers.indexOf("precio");
+        const idxImagen = headers.indexOf("imagen");
+        const idxCategoria = headers.indexOf("categoria");
         if (idxNombre === -1 || idxRequisitos === -1 || idxDescripcion === -1 || idxPrecio === -1) {
             alert("El archivo Excel no tiene los encabezados requeridos.");
             return;
@@ -185,7 +189,9 @@ function setupCargaExcel() {
                 nombre: row[idxNombre],
                 requisitos: row[idxRequisitos] || "",
                 descripcion: row[idxDescripcion] || "",
-                precio: row[idxPrecio] || ""
+                precio: row[idxPrecio] || "",
+                imagen: idxImagen !== -1 ? row[idxImagen] : "",
+                categoria: idxCategoria !== -1 ? row[idxCategoria] : ""
             });
         }
         estudios = nuevosEstudios;

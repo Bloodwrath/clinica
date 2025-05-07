@@ -6,7 +6,7 @@
 <div id="MenuContenedor" class="Menu contenedor">
     <a href="index.html" class="logoC">
         <img class="logo" src="assets/img/LOGO.png">
-        <!--img class="logotxt" src="assets/img/textoLogo.jpg"--></a>
+    </a>
     <input type="checkbox" id="menu">
     <label id="menuIcon" for="menu">☰</label>
     <nav class="navbar1">
@@ -16,34 +16,13 @@
             <li><a id="enlaces" href="#" class="nav-link">Pricing</a></li>
             <li><a id="enlaces" href="#" class="nav-link">FAQs</a></li>
             <li><a id="enlaces" href="#" class="nav-link">About</a></li>
-            <li><a id="registro" type="button" class="btn" href="registro.html">Sign-up</a></li>
+            <!-- Barra de búsqueda con autocompletado -->
             <li>
-                <div id="menuLoginGrupo">
-                    <button id="login" type="button" class="dropdown-toggle" data-bs-toggle="dropdown"
-                        aria-expanded="false" data-bs-auto-close="outside">Login</button>
-                    <form class="dropdown-menu p-4">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Correo electronico</label>
-                            <input type="email" class="form-control" id="email" placeholder="email@example.com">
-                        </div>
-                        <div class="mb-3">
-                            <label for="exampleDropdownFormPassword2" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Password">
-                        </div>
-                        <div class="mb-3">
-                            <button class="btn btn-primary" id="google-login">Iniciar Sesión con Google</button>
-                        </div>
-                        <button id="INICIAR SESION" type="submit" class="btn btn-primary">INICIAR SESION</button>
-                    </form>
-                </div>
-            </li>
-            <li>
-                <!-- Barra de búsqueda con autocompletado -->
                 <input type="text" id="busqueda-estudios" placeholder="Buscar estudio..." autocomplete="off">
                 <div id="sugerencias-busqueda" class="sugerencias"></div>
             </li>
+            <!-- Botón para cargar Excel -->
             <li>
-                <!-- Botón para cargar Excel -->
                 <label for="input-excel" class="btn btn-secondary" style="cursor:pointer;">Actualizar catálogo</label>
                 <input type="file" id="input-excel" accept=".xlsx,.xls" style="display:none;">
             </li>
