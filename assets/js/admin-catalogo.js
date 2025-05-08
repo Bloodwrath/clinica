@@ -18,7 +18,7 @@ btnSubir.onclick = async () => {
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
         const headers = rows[0].map(h => h.toString().trim().toUpperCase());
-        const esperado = ["NOMBRE DEL ESTUDIO", "REQUISITOS", "DESCRIPCION DEL ESTUDIO", "PRECIO"];
+        const esperado = ["NOMBRE", "REQUISITOS", "DESCRIPCION", "PRECIO"];
         if (headers.join('|') !== esperado.join('|')) {
             resultado.innerHTML = '<div class="alert alert-danger">EL ARCHIVO NO TIENE LOS ENCABEZADOS CORRECTOS.</div>';
             return;
@@ -32,9 +32,9 @@ btnSubir.onclick = async () => {
             try {
                 await setDoc(doc(collection(db, "ESTUDIOS"), nombre), {
                     "ID": nombre,
-                    "NOMBRE DEL ESTUDIO": nombre,
+                    "NOMBRE": nombre,
                     "REQUISITOS": requisitos,
-                    "DESCRIPCION DEL ESTUDIO": descripcion,
+                    "DESCRIPCION": descripcion,
                     "PRECIO": precio
                 });
                 exitos++;

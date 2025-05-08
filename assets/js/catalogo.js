@@ -29,7 +29,6 @@ async function cargarEstudios() {
             precio: data["PRECIO"] || ""
         });
     });
-    // Solo ordenar si ambos nombres existen y son string
     estudios.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
     nombresEstudios = estudios.map(e => e.nombre);
     estudiosFiltrados = [...estudios];

@@ -21,9 +21,9 @@ async function mostrarDetalle() {
     <div class="col-md-8">
       <div class="card shadow">
         <div class="card-body">
-          <h2 class="card-title text-uppercase">${data["NOMBRE DEL ESTUDIO"]}</h2>
+          <h2 class="card-title text-uppercase">${data["NOMBRE"]}</h2>
           <h5 class="mt-4">DESCRIPCIÓN</h5>
-          <p>${data["DESCRIPCION DEL ESTUDIO"]}</p>
+          <p>${data["DESCRIPCION"]}</p>
           <h5 class="mt-4">REQUISITOS</h5>
           <p>${data["REQUISITOS"]}</p>
           <h5 class="mt-4">PRECIO</h5>
