@@ -1,219 +1,152 @@
 // Versión: 2.0.1
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { app } from "./firebaseKey.js";
-import * as XLSX from "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm";
+import { db } from './firebaseKey.js';
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
 // Variables globales
+const catalogoContainer = document.getElementById('Catalogo');
+const paginacion = document.getElementById('paginacion-catalogo');
+const inputBusqueda = document.getElementById('busqueda-estudio');
+const sugerencias = document.getElementById('sugerencias-busqueda');
+
 let estudios = [];
 let estudiosFiltrados = [];
 let nombresEstudios = [];
-const ESTUDIOS_POR_PAGINA = 18;
 let paginaActual = 1;
+const estudiosPorPagina = 18;
 
-// Inicializar Firebase
-const auth = getAuth(app);
-export const db = getFirestore(app); // Firestore Database
-
-// Cargar estudios desde localStorage o inicializar vacío
-function cargarEstudios() {
-    const data = localStorage.getItem("catalogoEstudios");
-    estudios = data ? JSON.parse(data) : [];
-    estudiosFiltrados = [...estudios];
+// Cargar estudios desde Firebase
+async function cargarEstudios() {
+    const q = query(collection(db, "ESTUDIOS"));
+    const querySnapshot = await getDocs(q);
+    estudios = [];
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        estudios.push({
+            id: doc.id,
+            nombre: data["NOMBRE"] || "",
+            requisitos: data["REQUISITOS"] || "",
+            descripcion: data["DESCRIPCION"] || "",
+            precio: data["PRECIO"] || ""
+        });
+    });
+    // Solo ordenar si ambos nombres existen y son string
+    estudios.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
     nombresEstudios = estudios.map(e => e.nombre);
+    estudiosFiltrados = [...estudios];
+    mostrarPagina(1);
+    generarPaginacion();
 }
+cargarEstudios();
 
-// Guardar estudios en localStorage
-function guardarEstudios() {
-    localStorage.setItem("catalogoEstudios", JSON.stringify(estudios));
-}
-
-// Renderizar catálogo
-function renderCatalogo(pagina = 1) {
-    const catalogo = document.getElementById("Catalogo");
-    catalogo.innerHTML = "";
-    const inicio = (pagina - 1) * ESTUDIOS_POR_PAGINA;
-    const fin = inicio + ESTUDIOS_POR_PAGINA;
+// Mostrar una página del catálogo
+function mostrarPagina(numPagina) {
+    paginaActual = numPagina;
+    catalogoContainer.innerHTML = '';
+    const inicio = (numPagina - 1) * estudiosPorPagina;
+    const fin = inicio + estudiosPorPagina;
     const paginaEstudios = estudiosFiltrados.slice(inicio, fin);
 
-    if (paginaEstudios.length === 0) {
-        catalogo.innerHTML = "<div class='col-12 text-center'><p>No se encontraron estudios.</p></div>";
-        renderPaginacion(1);
-        return;
-    }
-
-    paginaEstudios.forEach(estudio => {
-        const card = document.createElement("div");
-        card.className = "col-md-4 mb-4";
-        card.innerHTML = `
-            <div class="card h-100 shadow-sm">
-                ${estudio.imagen ? `<img src="${estudio.imagen}" class="card-img-top" alt="Imagen del estudio">` : ''}
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">${estudio.nombre}</h5>
-                    <p class="card-text">${estudio.descripcion}</p>
-                    <p class="card-text"><strong>Precio:</strong> $${estudio.precio}</p>
-                    ${estudio.categoria ? `<span class="badge bg-info mb-2">${estudio.categoria}</span>` : ''}
-                    <button class="btn btn-primary mt-auto" onclick="verDetalleEstudio('${estudio.id}')">Ver detalles</button>
-                </div>
-            </div>
-        `;
-        catalogo.appendChild(card);
+    paginaEstudios.forEach((estudio) => {
+        const col = document.createElement('div');
+        col.className = 'col-md-4 mb-4';
+        col.innerHTML = `
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title text-uppercase">${estudio.nombre}</h5>
+          <p class="card-text">${estudio.descripcion}</p>
+          <div class="mt-auto">
+            <button class="btn btn-primary w-100 ver-detalle" data-id="${estudio.id}">VER DETALLES</button>
+          </div>
+        </div>
+      </div>
+    `;
+        catalogoContainer.appendChild(col);
     });
 
-    renderPaginacion(Math.ceil(estudiosFiltrados.length / ESTUDIOS_POR_PAGINA));
+    // Evento para ver detalles
+    document.querySelectorAll('.ver-detalle').forEach(btn => {
+        btn.onclick = (e) => {
+            const id = btn.getAttribute('data-id');
+            window.location.href = `detalle.html?id=${id}`;
+        };
+    });
 }
 
-// Renderizar paginación
-function renderPaginacion(totalPaginas) {
-    const paginacion = document.getElementById("paginacion-catalogo");
-    paginacion.innerHTML = "";
-
+// Generar paginación
+function generarPaginacion() {
+    paginacion.innerHTML = '';
+    const totalPaginas = Math.ceil(estudiosFiltrados.length / estudiosPorPagina);
     if (totalPaginas <= 1) return;
 
     // Botón anterior
-    paginacion.innerHTML += `
-        <li class="page-item${paginaActual === 1 ? " disabled" : ""}">
-            <a class="page-link" href="#" data-pag="${paginaActual - 1}">&laquo;</a>
-        </li>
-    `;
+    paginacion.innerHTML += `<li class="page-item${paginaActual === 1 ? ' disabled' : ''}">
+    <a class="page-link" href="#" data-pag="${paginaActual - 1}">&laquo;</a>
+  </li>`;
 
+    // Botones de página
     for (let i = 1; i <= totalPaginas; i++) {
-        paginacion.innerHTML += `
-            <li class="page-item${paginaActual === i ? " active" : ""}">
-                <a class="page-link" href="#" data-pag="${i}">${i}</a>
-            </li>
-        `;
+        paginacion.innerHTML += `<li class="page-item${i === paginaActual ? ' active' : ''}">
+      <a class="page-link" href="#" data-pag="${i}">${i}</a>
+    </li>`;
     }
 
     // Botón siguiente
-    paginacion.innerHTML += `
-        <li class="page-item${paginaActual === totalPaginas ? " disabled" : ""}">
-            <a class="page-link" href="#" data-pag="${paginaActual + 1}">&raquo;</a>
-        </li>
-    `;
+    paginacion.innerHTML += `<li class="page-item${paginaActual === totalPaginas ? ' disabled' : ''}">
+    <a class="page-link" href="#" data-pag="${paginaActual + 1}">&raquo;</a>
+  </li>`;
 
     // Eventos de paginación
-    paginacion.querySelectorAll("a.page-link").forEach(link => {
-        link.onclick = (e) => {
+    paginacion.querySelectorAll('a').forEach(a => {
+        a.onclick = (e) => {
             e.preventDefault();
-            const pag = parseInt(link.getAttribute("data-pag"));
+            const pag = parseInt(a.getAttribute('data-pag'));
             if (pag >= 1 && pag <= totalPaginas) {
-                paginaActual = pag;
-                renderCatalogo(paginaActual);
+                mostrarPagina(pag);
+                generarPaginacion();
             }
         };
     });
 }
 
-// Buscar estudios
-function buscarEstudios(texto) {
-    if (!texto) {
+// Barra de búsqueda con autocompletado
+inputBusqueda.addEventListener('input', () => {
+    const valor = inputBusqueda.value.trim().toUpperCase();
+    sugerencias.innerHTML = '';
+    if (!valor) {
+        sugerencias.style.display = 'none';
         estudiosFiltrados = [...estudios];
-    } else {
-        estudiosFiltrados = estudios.filter(e => e.nombre.toLowerCase().includes(texto.toLowerCase()));
+        mostrarPagina(1);
+        generarPaginacion();
+        return;
     }
-    paginaActual = 1;
-    renderCatalogo(paginaActual);
-}
-
-// Autocompletado
-function setupAutocompletado() {
-    const input = document.getElementById("busqueda-estudios");
-    const sugerencias = document.getElementById("sugerencias-busqueda");
-
-    input.addEventListener("input", () => {
-        const valor = input.value.trim().toLowerCase();
-        sugerencias.innerHTML = "";
-        if (!valor) return;
-        const coincidencias = nombresEstudios.filter(nombre => nombre.toLowerCase().includes(valor));
-        coincidencias.slice(0, 8).forEach(nombre => {
-            const div = document.createElement("div");
-            div.className = "sugerencia-item";
-            div.textContent = nombre;
-            div.onclick = () => {
-                input.value = nombre;
-                sugerencias.innerHTML = "";
-                buscarEstudioExacto(nombre);
+    const sugeridos = nombresEstudios.filter(n => n.includes(valor));
+    if (sugeridos.length) {
+        sugeridos.slice(0, 8).forEach(sug => {
+            const item = document.createElement('a');
+            item.className = 'list-group-item list-group-item-action text-uppercase';
+            item.textContent = sug;
+            item.onclick = () => {
+                inputBusqueda.value = sug;
+                sugerencias.innerHTML = '';
+                sugerencias.style.display = 'none';
+                buscarPorNombreExacto(sug);
             };
-            sugerencias.appendChild(div);
+            sugerencias.appendChild(item);
         });
-    });
+        sugerencias.style.display = 'block';
+    } else {
+        sugerencias.style.display = 'none';
+    }
+});
 
-    document.addEventListener("click", (e) => {
-        if (!sugerencias.contains(e.target) && e.target !== input) {
-            sugerencias.innerHTML = "";
-        }
-    });
-}
-
-// Buscar estudio exacto
-function buscarEstudioExacto(nombre) {
+// Buscar por nombre exacto
+function buscarPorNombreExacto(nombre) {
     estudiosFiltrados = estudios.filter(e => e.nombre === nombre);
-    paginaActual = 1;
-    renderCatalogo(paginaActual);
+    mostrarPagina(1);
+    generarPaginacion();
 }
 
-// Ver detalles de estudio
-window.verDetalleEstudio = function (id) {
-    localStorage.setItem("estudioDetalle", id);
-    window.location.href = "detalle.html";
-};
-
-// Cargar Excel
-function setupCargaExcel() {
-    const inputExcel = document.getElementById("input-excel");
-    inputExcel.addEventListener("change", async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const data = await file.arrayBuffer();
-        const workbook = XLSX.read(data);
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        const headers = rows[0].map(h => h.toLowerCase().trim());
-        const idxNombre = headers.indexOf("nombre del estudio");
-        const idxRequisitos = headers.indexOf("requisitos");
-        const idxDescripcion = headers.indexOf("descripcion del estudio");
-        const idxPrecio = headers.indexOf("precio");
-        const idxImagen = headers.indexOf("imagen");
-        const idxCategoria = headers.indexOf("categoria");
-        if (idxNombre === -1 || idxRequisitos === -1 || idxDescripcion === -1 || idxPrecio === -1) {
-            alert("El archivo Excel no tiene los encabezados requeridos.");
-            return;
-        }
-        const nuevosEstudios = [];
-        for (let i = 1; i < rows.length; i++) {
-            const row = rows[i];
-            if (!row[idxNombre]) continue;
-            nuevosEstudios.push({
-                id: crypto.randomUUID(),
-                nombre: row[idxNombre],
-                requisitos: row[idxRequisitos] || "",
-                descripcion: row[idxDescripcion] || "",
-                precio: row[idxPrecio] || "",
-                imagen: idxImagen !== -1 ? row[idxImagen] : "",
-                categoria: idxCategoria !== -1 ? row[idxCategoria] : ""
-            });
-        }
-        estudios = nuevosEstudios;
-        guardarEstudios();
-        cargarEstudios();
-        renderCatalogo(1);
-        alert("Catálogo actualizado correctamente.");
-        inputExcel.value = "";
-    });
-}
-
-// Inicialización
-document.addEventListener("DOMContentLoaded", () => {
-    cargarEstudios();
-    renderCatalogo();
-    setupAutocompletado();
-    setupCargaExcel();
-
-    // Buscar al escribir en la barra de búsqueda
-    document.getElementById("busqueda-estudios").addEventListener("keyup", (e) => {
-        if (e.key === "Enter") {
-            buscarEstudios(e.target.value);
-        }
-    });
+// Si se borra la búsqueda, mostrar todo
+inputBusqueda.addEventListener('blur', () => {
+    setTimeout(() => { sugerencias.innerHTML = ''; sugerencias.style.display = 'none'; }, 200);
 });

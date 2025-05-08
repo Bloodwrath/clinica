@@ -1,7 +1,12 @@
-// Importamos Firebase correctamente
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Configuración de Firebase
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBiYElqFixHiTHrnO01EVP8tmNIHQmp05M",
   authDomain: "clinica-60d05.firebaseapp.com",
@@ -12,8 +17,10 @@ const firebaseConfig = {
   measurementId: "G-TGWPKRFBKB"
 };
 
-// Inicializamos Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 // Exportamos la instancia de Firebase correctamente
 export { app };
+export const db = getFirestore(app);
