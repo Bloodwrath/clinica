@@ -6,43 +6,37 @@ const id = params.get('id');
 const contenedor = document.getElementById('detalle-estudio');
 
 async function mostrarDetalle() {
-    if (!id) {
-        contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
-        return;
-    }
-    const docRef = doc(db, "ESTUDIOS", id);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
-        contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
-        return;
-    }
-    const data = docSnap.data();
+  if (!id) {
+    contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
+    return;
+  }
+  const docRef = doc(db, "ESTUDIOS", id);
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) {
+    contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
+    return;
+  }
+  const data = docSnap.data();
 
-    // No renderices el logo aquí, el header real está en el HTML principal
-    contenedor.innerHTML = `
+  // Restaura la imagen como antes, y muestra los detalles en el orden solicitado
+  contenedor.innerHTML = `
     <div class="col-12 d-flex flex-column flex-md-row align-items-start gap-4">
       <div class="flex-shrink-0" style="width:340px;max-width:100%;">
         <div style="position:relative;">
           <img src="assets/img/imagenFondo.jpg" alt="${data["NOMBRE"]}" class="w-100 rounded" style="object-fit:cover;max-height:240px;">
-          <div style="position:absolute;top:18px;left:18px;color:white;font-weight:bold;font-size:1.6rem;letter-spacing:1px;text-shadow:1px 1px 8px #000,0 0 2px #000;">
-            ${data["CATEGORIA"] || ""}
-          </div>
         </div>
       </div>
       <div class="flex-grow-1">
-        <h2 class="mb-1" style="font-size:1.5rem;font-weight:700;">${data["NOMBRE"]}</h2>
-        <div class="mb-2" style="font-size:1.15rem;color:#222;">$${data["PRECIO"]} MXN</div>
-        <div class="mb-3">
-          <label for="cantidad" class="form-label mb-1" style="font-size:1rem;">Cantidad</label>
-          <input type="number" id="cantidad" value="1" min="1" class="form-control d-inline-block" style="width:80px;">
-        </div>
-        <div class="mb-2" style="font-size:1.1rem;font-weight:600;">${data["NOMBRE"]}</div>
-        <div class="mb-2 text-muted" style="font-style:italic;">${data["CATEGORIA"] || ""}</div>
-        <div class="mb-3" style="font-size:1rem;">
-          <b>Instrucciones para toma de muestra:</b> ${data["REQUISITOS"] || "CONSULTAR EN LABORATORIO"}
-        </div>
-        <div style="font-size:1rem;">
+        <h2 class="mb-3" style="font-size:2rem;font-weight:700;">${data["NOMBRE"]}</h2>
+        <div class="mb-2" style="font-size:1.3rem;color:#007bff;font-weight:600;">$${data["PRECIO"]} MXN</div>
+        <div class="mb-3" style="font-size:1.1rem;">
           <b>Descripción:</b> ${data["DESCRIPCION"] || ""}
+        </div>
+        <div class="mb-3" style="font-size:1.1rem;">
+          <b>Requisitos:</b> ${data["REQUISITOS"] || "CONSULTAR EN LABORATORIO"}
+        </div>
+        <div class="mb-2" style="font-size:1.1rem;">
+          <b>Tiempo de entrega:</b> ${data["TIEMPO DE ENTREGA"] || "CONSULTAR EN LABORATORIO"}
         </div>
       </div>
     </div>
@@ -52,35 +46,35 @@ async function mostrarDetalle() {
     </div>
     `;
 
-    mostrarSugerenciasCategoria(data["CATEGORIA"], data["NOMBRE"]);
+  mostrarSugerenciasCategoria(data["CATEGORIA"], data["NOMBRE"]);
 }
 
 async function mostrarSugerenciasCategoria(categoria, nombreActual) {
-    if (!categoria) return;
-    const sugerenciasCont = document.getElementById('sugerencias-categoria');
-    if (!sugerenciasCont) return;
+  if (!categoria) return;
+  const sugerenciasCont = document.getElementById('sugerencias-categoria');
+  if (!sugerenciasCont) return;
 
-    // Buscar estudios de la misma categoría, excluyendo el actual
-    const q = query(collection(db, "ESTUDIOS"), where("CATEGORIA", "==", categoria));
-    const querySnapshot = await getDocs(q);
-    let sugeridos = [];
-    querySnapshot.forEach(docSnap => {
-        const d = docSnap.data();
-        if (d["NOMBRE"] !== nombreActual) {
-            sugeridos.push({
-                id: docSnap.id,
-                nombre: d["NOMBRE"],
-                precio: d["PRECIO"],
-                categoria: d["CATEGORIA"],
-                // Puedes agregar imagen si la tienes en la BD
-            });
-        }
-    });
+  // Buscar estudios de la misma categoría, excluyendo el actual
+  const q = query(collection(db, "ESTUDIOS"), where("CATEGORIA", "==", categoria));
+  const querySnapshot = await getDocs(q);
+  let sugeridos = [];
+  querySnapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    if (d["NOMBRE"] !== nombreActual) {
+      sugeridos.push({
+        id: docSnap.id,
+        nombre: d["NOMBRE"],
+        precio: d["PRECIO"],
+        categoria: d["CATEGORIA"],
+        // Puedes agregar imagen si la tienes en la BD
+      });
+    }
+  });
 
-    // Mezclar aleatoriamente y tomar hasta 4
-    sugeridos = sugeridos.sort(() => Math.random() - 0.5).slice(0, 4);
+  // Mezclar aleatoriamente y tomar hasta 4
+  sugeridos = sugeridos.sort(() => Math.random() - 0.5).slice(0, 4);
 
-    sugerenciasCont.innerHTML = sugeridos.map(s => `
+  sugerenciasCont.innerHTML = sugeridos.map(s => `
       <div class="col-6 col-md-3 mb-3">
         <div class="card h-100" style="border:none;">
           <div style="position:relative;">
@@ -102,12 +96,12 @@ async function mostrarSugerenciasCategoria(categoria, nombreActual) {
       </div>
     `).join('');
 
-    // Evento para ver detalles de sugeridos
-    sugerenciasCont.querySelectorAll('.ver-detalle-sugerido').forEach(btn => {
-        btn.onclick = () => {
-            window.location.href = `detalle.html?id=${btn.getAttribute('data-id')}`;
-        };
-    });
+  // Evento para ver detalles de sugeridos
+  sugerenciasCont.querySelectorAll('.ver-detalle-sugerido').forEach(btn => {
+    btn.onclick = () => {
+      window.location.href = `detalle.html?id=${btn.getAttribute('data-id')}`;
+    };
+  });
 }
 
 mostrarDetalle();
