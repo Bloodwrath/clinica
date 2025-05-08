@@ -18,16 +18,16 @@ btnSubir.onclick = async () => {
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
         const headers = rows[0].map(h => h.toString().trim().toUpperCase());
-        const esperado = ["NOMBRE", "REQUISITOS", "DESCRIPCION", "PRECIO"];
+        const esperado = ["NOMBRE", "REQUISITOS", "DESCRIPCION", "PRECIO", "CATEGORIA"];
         if (headers.join('|') !== esperado.join('|')) {
-            resultado.innerHTML = '<div class="alert alert-danger">EL ARCHIVO NO TIENE LOS ENCABEZADOS CORRECTOS.</div>';
+            resultado.innerHTML = '<div class="alert alert-danger">EL ARCHIVO NO TIENE LOS ENCABEZADOS CORRECTOS. DEBE SER: NOMBRE, REQUISITOS, DESCRIPCION, PRECIO, CATEGORIA</div>';
             return;
         }
         let exitos = 0, errores = 0;
         for (let i = 1; i < rows.length; i++) {
             const fila = rows[i];
-            if (fila.length < 4) { errores++; continue; }
-            const [nombre, requisitos, descripcion, precio] = fila.map(x => (x || '').toString().trim().toUpperCase());
+            if (fila.length < 5) { errores++; continue; }
+            const [nombre, requisitos, descripcion, precio, categoria] = fila.map(x => (x || '').toString().trim().toUpperCase());
             if (!nombre) { errores++; continue; }
             try {
                 await setDoc(doc(collection(db, "ESTUDIOS"), nombre), {
@@ -35,7 +35,8 @@ btnSubir.onclick = async () => {
                     "NOMBRE": nombre,
                     "REQUISITOS": requisitos,
                     "DESCRIPCION": descripcion,
-                    "PRECIO": precio
+                    "PRECIO": precio,
+                    "CATEGORIA": categoria
                 });
                 exitos++;
             } catch {

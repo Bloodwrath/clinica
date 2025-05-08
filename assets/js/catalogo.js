@@ -47,18 +47,26 @@ function mostrarPagina(numPagina) {
 
     paginaEstudios.forEach((estudio) => {
         const col = document.createElement('div');
-        col.className = 'col-md-4 mb-4';
+        col.className = 'col-md-4 mb-4 d-flex justify-content-center';
         col.innerHTML = `
-      <div class="card h-100 shadow-sm">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title text-uppercase">${estudio.nombre}</h5>
-          <p class="card-text">${estudio.descripcion}</p>
-          <div class="mt-auto">
-            <button class="btn btn-primary w-100 ver-detalle" data-id="${estudio.id}">VER DETALLES</button>
+        <div class="card" style="width: 18rem; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+          <div style="position:relative;">
+            <img src="assets/img/imagenFondo.jpg" alt="${estudio.nombre}" class="w-100" style="height:180px;object-fit:cover;">
+            <div style="position:absolute;top:12px;left:16px;color:white;font-weight:bold;font-size:1.25rem;letter-spacing:1px;text-shadow:1px 1px 8px #000,0 0 2px #000;">
+              ${estudio.categoria || ""}
+            </div>
+          </div>
+          <div class="card-body px-0 pt-2 pb-3">
+            <div class="card-title mb-1" style="font-size:1.05rem;font-weight:500;line-height:1.2;">
+              ${estudio.nombre}
+            </div>
+            <div class="fw-normal mb-1" style="font-size:1rem;color:#444;">
+              $${estudio.precio} MXN
+            </div>
+            <button class="btn btn-link p-0 mt-1 ver-detalle" data-id="${estudio.id}" style="font-size:0.97rem;text-decoration:none;color:#007bff;">Ver detalles</button>
           </div>
         </div>
-      </div>
-    `;
+        `;
         catalogoContainer.appendChild(col);
     });
 

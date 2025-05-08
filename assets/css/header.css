@@ -1,6 +1,10 @@
 header {
-    background: linear-gradient(90deg,rgba(255, 255, 255, 1) 19%, rgba(84, 255, 249, 1) 33%, rgba(0, 178, 255, 1) 99%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 19%, rgba(84, 255, 249, 1) 33%, rgba(0, 178, 255, 1) 99%);
     width: 100%;
+    padding: 0;
+    margin-top: 0;
+    border-top: 0;
+    min-height: 70px;
 }
 
 #header,
@@ -9,13 +13,30 @@ header {
 }
 
 .logo {
-    max-width: 80px;
-    margin: auto;
+    max-width: 160px;
+    height: 48px !important;
+    width: auto !important;
+    margin: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    object-fit: contain;
 }
 
 .logoC {
-    max-width: 300px;
-    max-height: fit-content;
+    max-width: 280px;
+    max-height: 96px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center;
+    padding: 0 16px;
+    margin: 0 24px 0 0;
+    background: #fff;
+    border-radius: 0 0 30px 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .logotxt {
@@ -37,7 +58,7 @@ header {
     width: 100%;
 }
 
-.nombre{
+.nombre {
     text-transform: uppercase;
     font-size: 250%;
 }
@@ -58,7 +79,8 @@ header {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    overflow: hidden; /* importante para cortar el overlay si se sale */
+    overflow: hidden;
+    /* importante para cortar el overlay si se sale */
     z-index: 0;
 }
 
@@ -66,18 +88,28 @@ header {
 .analisis::before {
     content: "";
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 123, 255, 0.4); /* azul con transparencia */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 123, 255, 0.4);
+    /* azul con transparencia */
     z-index: 1;
 }
 
 /* Elevar el contenido por encima del overlay */
-.analisis > * {
+.analisis>* {
     position: relative;
     z-index: 2;
 }
 
+/* Elimina cualquier espacio/margen/padding arriba del header */
+body,
+html {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
 
 #registro {
     background-image: linear-gradient(to right, #000000 0%, #434343 51%, #000000 100%);
@@ -105,7 +137,10 @@ header {
 
 #MenuContenedor {
     margin: auto;
-
+    display: flex !important;
+    align-items: center !important;
+    gap: 20px;
+    min-height: 80px;
 }
 
 #login {
@@ -148,13 +183,14 @@ header {
     left: 0;
     right: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start !important;
     justify-content: space-between;
     z-index: 1000;
     color: #0E3386;
     font-size: clamp(1rem, 2.5vw, 1.5rem);
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
-
 
 .Menu .navbar1 ul li {
     position: relative;
@@ -164,6 +200,27 @@ header {
 
 .navbar1 {
     align-items: baseline;
+}
+
+header nav ul {
+    gap: 24px !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+header nav ul li a {
+    font-size: 2.2rem;
+    /* 2x más grande que antes */
+    padding: 16px 24px;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+header nav ul li a:hover {
+    background: #f7d158;
+    color: #222 !important;
+    font-weight: bold;
 }
 
 #enlaces {
@@ -314,4 +371,50 @@ header {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.main-header {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 19%, rgba(84, 255, 249, 1) 33%, rgba(0, 178, 255, 1) 99%);
+    padding: 0;
+    margin-top: 0;
+    border-top: 0;
+    min-height: 96px;
+    width: 100%;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+}
+
+.header-bar {
+    min-height: 96px;
+}
+
+.header-logo {
+    background: transparent;
+    display: flex;
+    align-items: center;
+    min-width: 280px;
+    justify-content: center;
+}
+
+.main-menu {
+    gap: 24px !important;
+    list-style: none;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.menu-link {
+    font-size: 2.2rem;
+    padding: 16px 24px;
+    border-radius: 12px;
+    transition: background 0.2s;
+    color: #0E3386 !important;
+}
+
+.menu-link:hover {
+    background: #f7d158;
+    color: #222 !important;
+    font-weight: bold;
 }

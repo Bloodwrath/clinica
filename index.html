@@ -15,11 +15,9 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 
-<body>
 
-  <header class="p-3">
-    <div id="header"></div>
-  </header>
+<body>
+  <header id="header" class="main-header"></header>
 
   <main>
     <div class="container mt-5 mb-5">
@@ -63,7 +61,12 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="module" src="assets/js/header.js" defer></script>
+  <script type="module">
+    // Cargar header.html dinámicamente
+    fetch('header.html')
+      .then(res => res.text())
+      .then(html => { document.getElementById('header').innerHTML = html; });
+  </script>
   <script type="module" src="assets/js/firebaseKey.js"></script>
   <script type="module" src="assets/js/catalogo.js" defer></script>
 
