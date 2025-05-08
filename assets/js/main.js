@@ -19,52 +19,13 @@ import { app } from "./firebaseKey.js";
 
 // 🔹 Función principal que se ejecuta al cargar el DOM
 document.addEventListener("DOMContentLoaded", function () {
-    const header = document.getElementById("header");
     const auth = getAuth(app);
-
-    const observer = new MutationObserver(() => {
-        const loginButton = document.getElementById("INICIAR SESION");
-        const googleLoginButton = document.getElementById("google-login");
-        const emailInput = document.getElementById("email");
-        const passwordInput = document.getElementById("password");
-
-        if (loginButton && googleLoginButton && emailInput && passwordInput) {
-            observer.disconnect();
-            initializeLoginEvents(loginButton, googleLoginButton, emailInput, passwordInput);
-        }
-    });
-
-    observer.observe(header, { childList: true, subtree: true });
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            header.id = "header2";
-            fetch("header2.html")
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById("header2").innerHTML = data;
-                    const usernameElement = document.getElementById("username");
-                    if (usernameElement) {
-                        usernameElement.textContent = user.displayName || user.email;
-                    }
-
-                    const logoutButton = document.getElementById("logout");
-                    if (logoutButton) {
-                        logoutButton.addEventListener("click", function () {
-                            signOut(auth)
-                                .then(() => mensajeDeExitoR(""))
-                                .catch((error) => console.error("Error al cerrar sesión:", error));
-                        });
-                    }
-                })
-                .catch(error => console.error("Error al cargar header2.html:", error));
+            console.log("Usuario autenticado:", user);
         } else {
-            fetch("header.html")
-                .then(response => response.text())
-                .then(data => {
-                    header.innerHTML = data;
-                })
-                .catch(error => console.error("Error al cargar header.html:", error));
+            console.log("No hay usuario autenticado.");
         }
     });
 });
