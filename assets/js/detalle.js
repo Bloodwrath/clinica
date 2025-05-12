@@ -5,6 +5,14 @@ const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
 const contenedor = document.getElementById('detalle-estudio');
 
+// Utilidad para formatear precios con comas y máximo 2 decimales
+function formatearPrecio(precio) {
+  if (precio === undefined || precio === null || precio === "") return "";
+  const num = Number(precio);
+  if (isNaN(num)) return precio;
+  return num.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+
 async function mostrarDetalle() {
   if (!id) {
     contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
@@ -28,7 +36,7 @@ async function mostrarDetalle() {
       </div>
       <div class="flex-grow-1">
         <h2 class="mb-3" style="font-size:2rem;font-weight:700;">${data["NOMBRE"]}</h2>
-        <div class="mb-2" style="font-size:1.3rem;color:#007bff;font-weight:600;">$${data["PRECIO"]} MXN</div>
+        <div class="mb-2" style="font-size:1.3rem;color:#007bff;font-weight:600;">$${formatearPrecio(data["PRECIO"])} MXN</div>
         <div id="contact-buttons" class="mb-3"></div>
         <div class="mb-3" style="font-size:1.1rem;">
           <b>Descripción:</b> ${data["DESCRIPCION"] || ""}
@@ -112,7 +120,7 @@ async function mostrarSugerenciasCategoria(categoria, nombreActual) {
               ${s.nombre}
             </div>
             <div class="fw-normal mb-1" style="font-size:0.95rem;color:#444;">
-              $${s.precio} MXN
+              $${formatearPrecio(s.precio)} MXN
             </div>
             <button class="btn btn-link p-0 ver-detalle-sugerido" data-id="${s.id}" style="font-size:0.93rem;text-decoration:none;color:#007bff;">Ver detalles</button>
           </div>

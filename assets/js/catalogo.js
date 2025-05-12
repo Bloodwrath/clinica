@@ -37,6 +37,14 @@ async function cargarEstudios() {
 }
 cargarEstudios();
 
+// Utilidad para formatear precios con comas y máximo 2 decimales
+function formatearPrecio(precio) {
+    if (precio === undefined || precio === null || precio === "") return "";
+    const num = Number(precio);
+    if (isNaN(num)) return precio;
+    return num.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+
 // Mostrar una página del catálogo
 function mostrarPagina(numPagina) {
     paginaActual = numPagina;
@@ -62,7 +70,7 @@ function mostrarPagina(numPagina) {
               ${estudio.nombre}
             </div>
             <div class="fw-normal mb-1" style="font-size:1rem;color:#444;">
-              $${estudio.precio} MXN
+              $${formatearPrecio(estudio.precio)} MXN
             </div>
             <button class="btn btn-link p-0 mt-1 ver-detalle" data-id="${estudio.id}" style="font-size:0.97rem;text-decoration:none;color:#007bff;">Ver detalles</button>
           </div>
