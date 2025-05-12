@@ -47,17 +47,25 @@ async function mostrarDetalle() {
     </div>
     `;
 
-  mostrarContactButtons();
+  mostrarContactButtons(data["NOMBRE"]);
   mostrarSugerenciasCategoria(data["CATEGORIA"], data["NOMBRE"]);
 }
 
-function mostrarContactButtons() {
+function mostrarContactButtons(nombreEstudio) {
   const contactButtons = document.getElementById('contact-buttons');
+  let llamarBtn = '';
+  // Detección básica de dispositivo móvil
+  if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    llamarBtn = `
+      <a href="tel:5579416398" class="btn btn-primary m-1">
+        LLAMAR
+      </a>
+    `;
+  }
+  const mensaje = encodeURIComponent(`Quiero hacer una cita para el estudio '${nombreEstudio}'`);
   contactButtons.innerHTML = `
-    <a href="tel:5579416398" class="btn btn-primary m-1">
-      LLAMAR
-    </a>
-    <a href="https://wa.me/5579416398" class="btn btn-success m-1" target="_blank" rel="noopener">
+    ${llamarBtn}
+    <a href="https://wa.me/5579416398?text=${mensaje}" class="btn btn-success m-1" target="_blank" rel="noopener">
       WHATSAPP
     </a>
   `;
@@ -88,9 +96,11 @@ async function mostrarSugerenciasCategoria(categoria, nombreActual) {
   // Mezclar aleatoriamente y tomar hasta 4
   sugeridos = sugeridos.sort(() => Math.random() - 0.5).slice(0, 4);
 
-  sugerenciasCont.innerHTML = sugeridos.map(s => `
+  sugerenciasCont.innerHTML = sugeridos.map(s => {
+    const mensaje = encodeURIComponent(`Quiero hacer una cita para el estudio '${s.nombre}'`);
+    return `
       <div class="col-6 col-md-3 mb-3">
-        <div class="card h-100" style="border:none;">
+        <div class="card h-100 card-clickeable-sugerido" data-id="${s.id}" style="border:none;cursor:pointer;">
           <div style="position:relative;">
             <img src="assets/img/imagenFondo.jpg" alt="${s.nombre}" class="w-100" style="height:120px;object-fit:cover;">
             <div style="position:absolute;top:10px;left:10px;color:white;font-weight:bold;font-size:1rem;text-shadow:1px 1px 6px #000,0 0 2px #000;">
@@ -104,13 +114,26 @@ async function mostrarSugerenciasCategoria(categoria, nombreActual) {
             <div class="fw-normal mb-1" style="font-size:0.95rem;color:#444;">
               $${s.precio} MXN
             </div>
+            <a href="https://wa.me/5579416398?text=${mensaje}" class="btn btn-success m-1" target="_blank" rel="noopener" style="font-size:0.93rem;">
+              WHATSAPP
+            </a>
             <button class="btn btn-link p-0 ver-detalle-sugerido" data-id="${s.id}" style="font-size:0.93rem;text-decoration:none;color:#007bff;">Ver detalles</button>
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+  }).join('');
 
-  // Evento para ver detalles de sugeridos
+  // Evento para ver detalles en toda la tarjeta sugerida
+  sugerenciasCont.querySelectorAll('.card-clickeable-sugerido').forEach(card => {
+    card.onclick = (e) => {
+      if (e.target.closest('.ver-detalle-sugerido')) return;
+      const id = card.getAttribute('data-id');
+      window.location.href = `detalle.html?id=${id}`;
+    };
+  });
+
+  // Evento para el botón "Ver detalles" (opcional, para evitar doble navegación)
   sugerenciasCont.querySelectorAll('.ver-detalle-sugerido').forEach(btn => {
     btn.onclick = () => {
       window.location.href = `detalle.html?id=${btn.getAttribute('data-id')}`;

@@ -48,8 +48,9 @@ function mostrarPagina(numPagina) {
     paginaEstudios.forEach((estudio) => {
         const col = document.createElement('div');
         col.className = 'col-md-4 mb-4 d-flex justify-content-center';
+        // Hacemos la tarjeta clickeable
         col.innerHTML = `
-        <div class="card" style="width: 18rem; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <div class="card card-clickeable" data-id="${estudio.id}" style="width: 18rem; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor:pointer;">
           <div style="position:relative;">
             <img src="assets/img/imagenFondo.jpg" alt="${estudio.nombre}" class="w-100" style="height:180px;object-fit:cover;">
             <div style="position:absolute;top:12px;left:16px;color:white;font-weight:bold;font-size:1.25rem;letter-spacing:1px;text-shadow:1px 1px 8px #000,0 0 2px #000;">
@@ -70,7 +71,17 @@ function mostrarPagina(numPagina) {
         catalogoContainer.appendChild(col);
     });
 
-    // Evento para ver detalles
+    // Evento para ver detalles en toda la tarjeta
+    document.querySelectorAll('.card-clickeable').forEach(card => {
+        card.onclick = (e) => {
+            // Evita que un clic en el botón "Ver detalles" duplique la navegación
+            if (e.target.closest('.ver-detalle')) return;
+            const id = card.getAttribute('data-id');
+            window.location.href = `detalle.html?id=${id}`;
+        };
+    });
+
+    // Elimina el evento del botón "Ver detalles" (opcional, para evitar doble navegación)
     document.querySelectorAll('.ver-detalle').forEach(btn => {
         btn.onclick = (e) => {
             const id = btn.getAttribute('data-id');
