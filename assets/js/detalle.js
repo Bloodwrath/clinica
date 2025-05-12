@@ -29,6 +29,7 @@ async function mostrarDetalle() {
       <div class="flex-grow-1">
         <h2 class="mb-3" style="font-size:2rem;font-weight:700;">${data["NOMBRE"]}</h2>
         <div class="mb-2" style="font-size:1.3rem;color:#007bff;font-weight:600;">$${data["PRECIO"]} MXN</div>
+        <div id="contact-buttons" class="mb-3"></div>
         <div class="mb-3" style="font-size:1.1rem;">
           <b>Descripción:</b> ${data["DESCRIPCION"] || ""}
         </div>
@@ -46,7 +47,20 @@ async function mostrarDetalle() {
     </div>
     `;
 
+  mostrarContactButtons();
   mostrarSugerenciasCategoria(data["CATEGORIA"], data["NOMBRE"]);
+}
+
+function mostrarContactButtons() {
+  const contactButtons = document.getElementById('contact-buttons');
+  contactButtons.innerHTML = `
+    <a href="tel:5579416398" class="btn btn-primary m-1">
+      LLAMAR
+    </a>
+    <a href="https://wa.me/55579416398" class="btn btn-success m-1" target="_blank" rel="noopener">
+      WHATSAPP
+    </a>
+  `;
 }
 
 async function mostrarSugerenciasCategoria(categoria, nombreActual) {
