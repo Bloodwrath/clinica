@@ -97,7 +97,7 @@ async function mostrarSugerenciasCategoria(categoria, nombreActual) {
   sugeridos = sugeridos.sort(() => Math.random() - 0.5).slice(0, 4);
 
   sugerenciasCont.innerHTML = sugeridos.map(s => {
-    const mensaje = encodeURIComponent(`Quiero hacer una cita para el estudio '${s.nombre}'`);
+    // Elimina el botón de WhatsApp en sugerencias
     return `
       <div class="col-6 col-md-3 mb-3">
         <div class="card h-100 card-clickeable-sugerido" data-id="${s.id}" style="border:none;cursor:pointer;">
@@ -114,9 +114,6 @@ async function mostrarSugerenciasCategoria(categoria, nombreActual) {
             <div class="fw-normal mb-1" style="font-size:0.95rem;color:#444;">
               $${s.precio} MXN
             </div>
-            <a href="https://wa.me/5579416398?text=${mensaje}" class="btn btn-success m-1" target="_blank" rel="noopener" style="font-size:0.93rem;">
-              WHATSAPP
-            </a>
             <button class="btn btn-link p-0 ver-detalle-sugerido" data-id="${s.id}" style="font-size:0.93rem;text-decoration:none;color:#007bff;">Ver detalles</button>
           </div>
         </div>
