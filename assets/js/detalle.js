@@ -57,7 +57,7 @@ function mostrarContactButtons() {
     <a href="tel:5579416398" class="btn btn-primary m-1">
       LLAMAR
     </a>
-    <a href="https://wa.me/55579416398" class="btn btn-success m-1" target="_blank" rel="noopener">
+    <a href="https://wa.me/52579416398" class="btn btn-success m-1" target="_blank" rel="noopener">
       WHATSAPP
     </a>
   `;
