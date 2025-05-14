@@ -1,3 +1,6 @@
+import { db } from './firebaseKey.js';
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
 // Versión: 2.0.1
 // Variables globales
 const catalogoContainer = document.getElementById('Catalogo');
@@ -11,18 +14,19 @@ let nombresEstudios = [];
 let paginaActual = 1;
 const estudiosPorPagina = 18;
 
-// Cargar estudios desde el backend
+// Cargar estudios desde Firebase
 async function cargarEstudios() {
-    const response = await fetch('https://backend-smjs.onrender.com/api/estudios');
-    const data = await response.json();
+    const snapshot = await getDocs(collection(db, "ESTUDIOS"));
     estudios = [];
-    data.forEach((item) => {
+    snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
         estudios.push({
-            id: item.id,
-            nombre: item.nombre || "",
-            requisitos: item.requisitos || "",
-            descripcion: item.descripcion || "",
-            precio: item.precio || ""
+            id: docSnap.id,
+            nombre: data.NOMBRE || "",
+            requisitos: data.REQUISITOS || "",
+            descripcion: data.DESCRIPCION || "",
+            precio: data.PRECIO || "",
+            categoria: data.CATEGORIA || ""
         });
     });
     estudios.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
@@ -141,7 +145,12 @@ inputBusqueda.addEventListener('input', () => {
         generarPaginacion();
         return;
     }
-    const sugeridos = nombresEstudios.filter(n => n.includes(valor));
+    // Coincidencia parcial y sin importar el orden de palabras
+    const palabras = valor.split(/\s+/).filter(Boolean);
+    const sugeridos = nombresEstudios.filter(n => {
+        const nombre = n.toUpperCase();
+        return palabras.every(palabra => nombre.includes(palabra));
+    });
     if (sugeridos.length) {
         sugeridos.slice(0, 8).forEach(sug => {
             const item = document.createElement('a');
@@ -161,14 +170,31 @@ inputBusqueda.addEventListener('input', () => {
     }
 });
 
-// Buscar por nombre exacto
-function buscarPorNombreExacto(nombre) {
-    estudiosFiltrados = estudios.filter(e => e.nombre === nombre);
+// Buscar por coincidencia parcial y sin importar el orden de palabras
+function buscarPorNombreParcial(valor) {
+    const palabras = valor.trim().toUpperCase().split(/\s+/).filter(Boolean);
+    estudiosFiltrados = estudios.filter(e => {
+        const nombre = (e.nombre || "").toUpperCase();
+        return palabras.every(palabra => nombre.includes(palabra));
+    });
     mostrarPagina(1);
     generarPaginacion();
 }
 
-// Si se borra la búsqueda, mostrar todo
+// Modifica el evento para buscar también al presionar Enter o al perder foco
+inputBusqueda.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        sugerencias.innerHTML = '';
+        sugerencias.style.display = 'none';
+        buscarPorNombreParcial(inputBusqueda.value);
+    }
+});
 inputBusqueda.addEventListener('blur', () => {
-    setTimeout(() => { sugerencias.innerHTML = ''; sugerencias.style.display = 'none'; }, 200);
+    setTimeout(() => {
+        sugerencias.innerHTML = '';
+        sugerencias.style.display = 'none';
+        if (inputBusqueda.value.trim()) {
+            buscarPorNombreParcial(inputBusqueda.value);
+        }
+    }, 200);
 });

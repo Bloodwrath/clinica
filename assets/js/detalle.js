@@ -18,12 +18,14 @@ async function mostrarDetalle() {
     contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
     return;
   }
-  const response = await fetch(`https://backend-smjs.onrender.com/api/estudios/${id}`);
-  if (!response.ok) {
+  // Obtener el estudio directamente de Firebase
+  const docRef = doc(db, "ESTUDIOS", id);
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) {
     contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
     return;
   }
-  const data = await response.json();
+  const data = docSnap.data();
 
   // Inserta la imagen en el div correspondiente
   const imagenCont = document.getElementById('detalle-imagen');
