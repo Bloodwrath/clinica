@@ -1,0 +1,131 @@
+/* Hero section */
+.hero-lab {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 19%, rgba(84, 255, 249, 0.85) 33%, rgba(0, 178, 255, 0.85) 99%), url('assets/img/imagenFondo.jpg') center/cover no-repeat;
+}
+
+.hero-lab .container {
+    /* No extra styles needed, Bootstrap handles it */
+}
+
+.hero-lab img {
+    max-width: 320px;
+    width: 100%;
+    border-radius: 450px 450px 450px 450px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 8px 2px;
+    margin-bottom: 1.5rem;
+}
+
+.hero-lab h1 {
+    color: #0E3386;
+}
+
+.hero-lab .lead {
+    color: #222;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+}
+
+.hero-lab p {
+    color: #0E3386;
+    font-size: 1.1rem;
+}
+
+.hero-lab .btn-primary {
+    background: #00b2ff;
+    border: none;
+}
+
+@media (max-width: 991px) {
+    .hero-lab img {
+        max-width: 220px;
+    }
+
+    .hero-lab h1 {
+        font-size: 2rem;
+    }
+
+    .hero-lab .lead {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-lab {
+        min-height: 45vh;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .hero-lab img {
+        max-width: 160px;
+        margin-bottom: 1rem;
+    }
+
+    .hero-lab h1 {
+        font-size: 1.3rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .hero-lab .lead {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-lab p {
+        font-size: 0.98rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-lab .btn-primary {
+        font-size: 1rem;
+        padding: 0.7rem 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-lab {
+        min-height: 30vh;
+        padding-top: 0.7rem;
+        padding-bottom: 0.7rem;
+    }
+
+    .hero-lab img {
+        max-width: 110px;
+        margin-bottom: 0.7rem;
+    }
+
+    .hero-lab h1 {
+        font-size: 1.05rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-lab .lead {
+        font-size: 0.95rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .hero-lab p {
+        font-size: 0.95rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .hero-lab .btn-primary {
+        font-size: 0.95rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Bienvenida section */
+.bienvenida-section h2 {
+    color: #0E3386;
+}
+
+.bienvenida-section .lead {
+    color: #222;
+}

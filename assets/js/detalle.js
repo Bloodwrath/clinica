@@ -18,42 +18,47 @@ async function mostrarDetalle() {
     contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
     return;
   }
-  const docRef = doc(db, "ESTUDIOS", id);
-  const docSnap = await getDoc(docRef);
-  if (!docSnap.exists()) {
+  const response = await fetch(`https://backend-smjs.onrender.com/api/estudios/${id}`);
+  if (!response.ok) {
     contenedor.innerHTML = '<div class="col-md-8"><div class="alert alert-danger">ESTUDIO NO ENCONTRADO.</div></div>';
     return;
   }
-  const data = docSnap.data();
+  const data = await response.json();
 
-  // Restaura la imagen como antes, y muestra los detalles en el orden solicitado
-  contenedor.innerHTML = `
-    <div class="col-12 d-flex flex-column flex-md-row align-items-start gap-4">
-      <div class="flex-shrink-0" style="width:340px;max-width:100%;">
-        <div style="position:relative;">
-          <img src="assets/img/imagenFondo.jpg" alt="${data["NOMBRE"]}" class="w-100 rounded" style="object-fit:cover;max-height:240px;">
-        </div>
+  // Inserta la imagen en el div correspondiente
+  const imagenCont = document.getElementById('detalle-imagen');
+  if (imagenCont) {
+    imagenCont.innerHTML = `
+      <div style="position:relative;">
+        <img src="assets/img/imagenFondo.jpg" alt="${data["NOMBRE"]}" class="w-100 rounded" style="object-fit:cover;max-height:240px;">
       </div>
-      <div class="flex-grow-1">
-        <h2 class="mb-3" style="font-size:2rem;font-weight:700;">${data["NOMBRE"]}</h2>
-        <div class="mb-2" style="font-size:1.3rem;color:#007bff;font-weight:600;">$${formatearPrecio(data["PRECIO"])} MXN</div>
-        <div id="contact-buttons" class="mb-3"></div>
-        <div class="mb-3" style="font-size:1.1rem;">
-          <b>Descripción:</b> ${data["DESCRIPCION"] || ""}
-        </div>
-        <div class="mb-3" style="font-size:1.1rem;">
-          <b>Requisitos:</b> ${data["REQUISITOS"] || "CONSULTAR EN LABORATORIO"}
-        </div>
-        <div class="mb-2" style="font-size:1.1rem;">
-          <b>Tiempo de entrega:</b> ${data["TIEMPO DE ENTREGA"] || "CONSULTAR EN LABORATORIO"}
-        </div>
-      </div>
-    </div>
-    <div class="mt-5">
-      <h5 class="mb-3" style="font-weight:600;">También te puede gustar</h5>
-      <div id="sugerencias-categoria" class="row"></div>
-    </div>
     `;
+  }
+
+  // Inserta el detalle en el div correspondiente
+  contenedor.innerHTML = `
+    <h2 class="mb-3" style="font-size:2rem;font-weight:700;">${data["NOMBRE"]}</h2>
+    <div class="mb-2" style="font-size:1.3rem;color:#007bff;font-weight:600;">$${formatearPrecio(data["PRECIO"])} MXN</div>
+    <div id="contact-buttons" class="mb-3"></div>
+    <div class="mb-3" style="font-size:1.1rem;">
+      <b>Descripción:</b> ${data["DESCRIPCION"] || ""}
+    </div>
+    <div class="mb-3" style="font-size:1.1rem;">
+      <b>Requisitos:</b> ${data["REQUISITOS"] || "CONSULTAR EN LABORATORIO"}
+    </div>
+    <div class="mb-2" style="font-size:1.1rem;">
+      <b>Tiempo de entrega:</b> ${data["TIEMPO DE ENTREGA"] || "CONSULTAR EN LABORATORIO"}
+    </div>
+  `;
+
+  // Inserta el bloque de sugerencias en el wrapper fuera del detalle
+  const sugerenciasWrapper = document.getElementById('sugerencias-wrapper');
+  if (sugerenciasWrapper) {
+    sugerenciasWrapper.innerHTML = `
+      <h5 class="mb-3" style="font-weight:600;">También te puede interesar</h5>
+      <div id="sugerencias-categoria" class="row g-3"></div>
+    `;
+  }
 
   mostrarContactButtons(data["NOMBRE"]);
   mostrarSugerenciasCategoria(data["CATEGORIA"], data["NOMBRE"]);

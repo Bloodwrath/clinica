@@ -1,7 +1,4 @@
 // Versión: 2.0.1
-import { db } from './firebaseKey.js';
-import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-
 // Variables globales
 const catalogoContainer = document.getElementById('Catalogo');
 const paginacion = document.getElementById('paginacion-catalogo');
@@ -14,19 +11,18 @@ let nombresEstudios = [];
 let paginaActual = 1;
 const estudiosPorPagina = 18;
 
-// Cargar estudios desde Firebase
+// Cargar estudios desde el backend
 async function cargarEstudios() {
-    const q = query(collection(db, "ESTUDIOS"));
-    const querySnapshot = await getDocs(q);
+    const response = await fetch('https://backend-smjs.onrender.com/api/estudios');
+    const data = await response.json();
     estudios = [];
-    querySnapshot.forEach((doc) => {
-        const data = doc.data();
+    data.forEach((item) => {
         estudios.push({
-            id: doc.id,
-            nombre: data["NOMBRE"] || "",
-            requisitos: data["REQUISITOS"] || "",
-            descripcion: data["DESCRIPCION"] || "",
-            precio: data["PRECIO"] || ""
+            id: item.id,
+            nombre: item.nombre || "",
+            requisitos: item.requisitos || "",
+            descripcion: item.descripcion || "",
+            precio: item.precio || ""
         });
     });
     estudios.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));

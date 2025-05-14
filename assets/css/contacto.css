@@ -1,0 +1,24 @@
+.contacto-title {
+    color: #0E3386;
+    font-size: 2.1rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+    .contacto-title {
+        font-size: 1.4rem;
+        margin-bottom: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contacto-title {
+        font-size: 1.1rem;
+    }
+}
+
+.hero-lab {
+    background: none !important;
+}

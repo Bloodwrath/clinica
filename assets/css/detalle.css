@@ -1,0 +1,30 @@
+.hero-lab {
+    min-height: 60vh;
+    background: none !important;
+    /* No flex ni centrado en desktop, deja que el contenido fluya horizontalmente */
+    display: block;
+    align-items: unset;
+    justify-content: unset;
+    text-align: unset;
+}
+
+@media (max-width: 991px) {
+    .hero-lab {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 45vh;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-lab {
+        min-height: 30vh;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
